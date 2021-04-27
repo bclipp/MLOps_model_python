@@ -1,4 +1,6 @@
 import math as math
+from datetime import datetime
+
 import numpy as np
 from sklearn import preprocessing
 from sklearn.ensemble import RandomForestRegressor
@@ -12,9 +14,10 @@ import dbutils
 
 def main():
     spark = ..
-    timestamp = int(time.time())
-    id = str(uuid.uuid1()).replace('-', '')
-    df = spark.read.format("delta").load((f"/dbfs/datalake/strocks_{id}_{timestamp}/data"))
+    now = datetime.now()
+    timestamp = now.strftime("%m%d%Y%H%M")
+    uid = str(uuid.uuid1()).replace('-', '')
+    df = spark.read.format("delta").load((f"/dbfs/datalake/strocks_{uid}_{timestamp}/data"))
     pdf = df.select("*").toPandas()
     df_2 = pdf.loc[:, ["AdjClose", "Volume"]]
     df_2["High_Low_Pert"] = (pdf["High"] - pdf["Low"]) / pdf["Close"] * 100.0
