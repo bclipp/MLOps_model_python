@@ -11,9 +11,14 @@ import time
 import mlflow
 import mlflow.sklearn
 import dbutils
+from pyspark.sql import SparkSession
+
 
 def main():
-    spark = ..
+    spark = SparkSession \
+        .builder \
+        .appName("MLOps_model_python") \
+        .getOrCreate()
     now = datetime.now()
     timestamp = now.strftime("%m%d%Y%H%M")
     uid = str(uuid.uuid1()).replace('-', '')
