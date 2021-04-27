@@ -1,3 +1,6 @@
-delta
-yfinance
+
+
+numpy
+mlflow
+sklearn
 dbutils
