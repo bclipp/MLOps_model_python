@@ -7,10 +7,9 @@ from sklearn.ensemble import RandomForestRegressor
 from sklearn.model_selection import train_test_split
 from sklearn import metrics
 import uuid
-import time
 import mlflow
 import mlflow.sklearn
-import dbutils
+# import dbutils
 from pyspark.sql import SparkSession
 
 
@@ -53,7 +52,7 @@ def main():
         mlflow.log_metric("mae", mae)
         mlflow.sklearn.log_model(regr, "model")
         model_path = f"/dbfs/datalake/strocks_{id}_{timestamp}/model"
-        dbutils.fs.rm(f"/dbfs/datalake/strocks_{id}_{timestamp}/model")
+        # dbutils.fs.rm(f"/dbfs/datalake/strocks_{id}_{timestamp}/model")
         mlflow.sklearn.save_model(regr, model_path)
 
 
