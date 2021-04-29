@@ -17,6 +17,7 @@ def main():
         .appName("MLOps_model_python") \
         .getOrCreate()
     uid = sys.argv[1]
+    spark.conf.set("spark.sql.execution.arrow.enabled", True)
     df = spark.read.format("delta").load(f"/dbfs/datalake/stocks_{uid}/data")
     pdf = df.select("*").toPandas()
     df_2 = pdf.loc[:, ["AdjClose", "Volume"]]
