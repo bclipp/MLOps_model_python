@@ -1,15 +1,13 @@
 import math as math
-from datetime import datetime
 
 import numpy as np
 from sklearn import preprocessing
 from sklearn.ensemble import RandomForestRegressor
 from sklearn.model_selection import train_test_split
 from sklearn import metrics
-import uuid
 import mlflow
 import mlflow.sklearn
-# import dbutils
+import sys
 from pyspark.sql import SparkSession
 
 
@@ -18,10 +16,8 @@ def main():
         .builder \
         .appName("MLOps_model_python") \
         .getOrCreate()
-    now = datetime.now()
-    timestamp = now.strftime("%m%d%Y%H%M")
-    uid = str(uuid.uuid1()).replace('-', '')
-    df = spark.read.format("delta").load((f"/dbfs/datalake/strocks_{uid}_{timestamp}/data"))
+    uid = sys.argv[1]
+    df = spark.read.format("delta").load((f"/dbfs/datalake/stocks_{uid}/data"))
     pdf = df.select("*").toPandas()
     df_2 = pdf.loc[:, ["AdjClose", "Volume"]]
     df_2["High_Low_Pert"] = (pdf["High"] - pdf["Low"]) / pdf["Close"] * 100.0
@@ -37,7 +33,7 @@ def main():
     y = np.array(df_2['label'])
     y = y[:-forecast_out]
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.33, random_state=42)
-    experiment_id = mlflow.create_experiment(f"/Users/bclipp770@yandex.com/stocks_{id}_{timestamp}-model")
+    experiment_id = mlflow.create_experiment(f"/Users/bclipp770@yandex.com/stocks_{uid}-model")
     experiment = mlflow.get_experiment(experiment_id)
     with mlflow.start_run():
         regr = RandomForestRegressor(max_depth=2, random_state=0)
@@ -51,8 +47,7 @@ def main():
         mlflow.log_metric("r2", r2)
         mlflow.log_metric("mae", mae)
         mlflow.sklearn.log_model(regr, "model")
-        model_path = f"/dbfs/datalake/strocks_{id}_{timestamp}/model"
-        # dbutils.fs.rm(f"/dbfs/datalake/strocks_{id}_{timestamp}/model")
+        model_path = f"/dbfs/datalake/stocks_{uid}/model"
         mlflow.sklearn.save_model(regr, model_path)
 
 
