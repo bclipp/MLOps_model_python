@@ -17,7 +17,7 @@ def main():
         .appName("MLOps_model_python") \
         .getOrCreate()
     uid = sys.argv[1]
-    df = spark.read.format("delta").load((f"/dbfs/datalake/stocks_{uid}/data"))
+    df = spark.read.format("delta").load(f"/dbfs/datalake/stocks_{uid}/data")
     pdf = df.select("*").toPandas()
     df_2 = pdf.loc[:, ["AdjClose", "Volume"]]
     df_2["High_Low_Pert"] = (pdf["High"] - pdf["Low"]) / pdf["Close"] * 100.0
@@ -47,7 +47,7 @@ def main():
         mlflow.log_metric("r2", r2)
         mlflow.log_metric("mae", mae)
         mlflow.sklearn.log_model(regr, "model")
-        model_path = f"/dbfs/datalake/stocks_{uid}/model"
+        model_path = f"dbfs:/datalake/stocks_{uid}/model"
         mlflow.sklearn.save_model(regr, model_path)
 
 
