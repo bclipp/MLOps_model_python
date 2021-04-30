@@ -18,7 +18,11 @@ def main():
         .getOrCreate()
     uid = sys.argv[1]
     spark.conf.set("spark.sql.execution.arrow.enabled", True)
-    df = spark.read.format("delta").load(f"dbfs:/datalake/stocks_{uid}/data")
+    print(f"reading delta table: dbfs:/datalake/stocks_{uid}/data")
+    try:
+        df = spark.read.format("delta").load(f"dbfs:/datalake/stocks_{uid}/data")
+    except Exception as e:
+        print(f"There was an error loading the delta stock table, : error:{e}")
     pdf = df.select("*").toPandas()
     df_2 = pdf.loc[:, ["AdjClose", "Volume"]]
     df_2["High_Low_Pert"] = (pdf["High"] - pdf["Low"]) / pdf["Close"] * 100.0
@@ -34,8 +38,15 @@ def main():
     y = np.array(df_2['label'])
     y = y[:-forecast_out]
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.33, random_state=42)
-    experiment_id = mlflow.create_experiment(f"/Users/bclipp770@yandex.com/stocks_{uid}-model")
+    print("creating MLflow project")
+    experiment_id = mlflow.create_experiment(f"/Users/bclipp770@yandex.com/datalake/stocks/experiments/{uid}")
     experiment = mlflow.get_experiment(experiment_id)
+    print("Name: {}".format(experiment.name))
+    print("Experiment_id: {}".format(experiment.experiment_id))
+    print("Artifact Location: {}".format(experiment.artifact_location))
+    print("Tags: {}".format(experiment.tags))
+    print("Lifecycle_stage: {}".format(experiment.lifecycle_stage))
+    print("building our model")
     with mlflow.start_run():
         regr = RandomForestRegressor(max_depth=2, random_state=0)
         regr.fit(X_train, y_train)
