@@ -17,6 +17,8 @@ def main():
         .appName("MLOps_model_python") \
         .getOrCreate()
     uid = sys.argv[1]
+    max_depth = int(80 if sys.argv[2] == "" else sys.argv[2])
+    n_estimators = int(100 if sys.argv[2] == "" else sys.argv[2])
     spark.conf.set("spark.sql.execution.arrow.enabled", True)
     print(f"reading delta table: dbfs:/datalake/stocks_{uid}/data")
     try:
@@ -39,22 +41,24 @@ def main():
     y = y[:-forecast_out]
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.33, random_state=42)
     print("creating MLflow project")
-    experiment_id = mlflow.create_experiment(f"/Users/bclipp770@yandex.com/datalake/stocks/experiments/{uid}")
-    experiment = mlflow.get_experiment(experiment_id)
-    print("Name: {}".format(experiment.name))
+    mlflow.set_experiment(f"/Users/bclipp770@yandex.com/datalake/stocks/experiments/{uid}")
+    experiment = mlflow.get_experiment_by_name(f"/Users/bclipp770@yandex.com/datalake/stocks/experiments/{uid}")
     print("Experiment_id: {}".format(experiment.experiment_id))
     print("Artifact Location: {}".format(experiment.artifact_location))
     print("Tags: {}".format(experiment.tags))
     print("Lifecycle_stage: {}".format(experiment.lifecycle_stage))
-    print("building our model")
+
     with mlflow.start_run():
-        regr = RandomForestRegressor(max_depth=2, random_state=0)
+        regr = RandomForestRegressor(max_depth=max_depth,
+                                     n_estimators=n_estimators,
+                                     random_state=0)
         regr.fit(X_train, y_train)
         y_pred = regr.predict(X_test)
         rmse = np.sqrt(metrics.mean_squared_error(y_test, y_pred))
         mae = metrics.mean_absolute_error(y_test, y_pred)
         r2 = metrics.r2_score(y_test, y_pred)
-        mlflow.log_param("max_depth", 2)
+        mlflow.log_param("max_depth", max_depth)
+        mlflow.log_param("n_estimators", n_estimators)
         mlflow.log_metric("rmse", rmse)
         mlflow.log_metric("r2", r2)
         mlflow.log_metric("mae", mae)
