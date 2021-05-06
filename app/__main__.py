@@ -9,6 +9,7 @@ import mlflow
 import mlflow.sklearn
 import sys
 from pyspark.sql import SparkSession
+from sklearn.model_selection import cross_val_score
 
 
 def main():
@@ -41,7 +42,7 @@ def main():
     y = y[:-forecast_out]
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.33, random_state=42)
     print("creating MLflow project")
-    mlflow.set_experiment(f"/Users/bclipp770@yandex.com/datalake/stocks/experiments/{uid}")
+    mlflow.set_experiment(f"/Users/bclipp770@yandex.com/datalake/stocks/experiments/cluster_{uid}")
     experiment = mlflow.get_experiment_by_name(f"/Users/bclipp770@yandex.com/datalake/stocks/experiments/{uid}")
     print("Experiment_id: {}".format(experiment.experiment_id))
     print("Artifact Location: {}".format(experiment.artifact_location))
