@@ -12,6 +12,7 @@ from pyspark.sql import SparkSession
 from sklearn.model_selection import cross_val_score
 import dbutils
 
+
 def main():
     spark = SparkSession \
         .builder \
@@ -44,10 +45,6 @@ def main():
     print("creating MLflow project")
     mlflow.set_experiment(f"/Users/bclipp770@yandex.com/datalake/stocks/experiments/cluster_{uid}")
     experiment = mlflow.get_experiment_by_name(f"/Users/bclipp770@yandex.com/datalake/stocks/experiments/{uid}")
-    print("Experiment_id: {}".format(experiment.experiment_id))
-    print("Artifact Location: {}".format(experiment.artifact_location))
-    print("Tags: {}".format(experiment.tags))
-    print("Lifecycle_stage: {}".format(experiment.lifecycle_stage))
 
     with mlflow.start_run():
         regr = RandomForestRegressor(max_depth=max_depth,
