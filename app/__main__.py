@@ -10,7 +10,7 @@ import mlflow.sklearn
 import sys
 from pyspark.sql import SparkSession
 from sklearn.model_selection import cross_val_score
-
+import dbutils
 
 def main():
     spark = SparkSession \
@@ -64,7 +64,9 @@ def main():
         mlflow.log_metric("r2", r2)
         mlflow.log_metric("mae", mae)
         mlflow.sklearn.log_model(regr, "model")
-        model_path = f"dbfs:/datalake/stocks_{uid}/model"
+        model_path = f"/Users/bclipp770@yandex.com/datalake/stocks/experiments/cluster_{uid}_model"
+        print(f"model saved at: {model_path}")
+        dbutils.fs.rm(model_path, recursive=True)
         mlflow.sklearn.save_model(regr, model_path)
 
 
