@@ -6,7 +6,8 @@ on-pull-requests:
   stage: test
   script:
     - pip install pylint
-    - pylint app
+    - pip install -r requirements.txt
+    - pylint -d C0103 --fail-under=8 app
 
 except-pull-requests:
   script: echo 'this should not run on pull requests'
