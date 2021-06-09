@@ -1,3 +1,4 @@
+image: "python:3.7"
 always-run:
   script: echo 'this should always run'
 
