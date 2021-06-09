@@ -2,7 +2,7 @@
 This module is used for build a specified sklearn model
 """
 
-import math as math
+import math
 import sys
 
 
@@ -18,6 +18,10 @@ import dbutils
 
 
 def main():
+    """
+    This is the entry function for the model building
+    :return:
+    """
     spark = SparkSession \
         .builder \
         .appName("MLOps_model_python") \
@@ -70,7 +74,6 @@ def main():
         print(f"model saved at: {model_path}")
         dbutils.fs.rm(model_path, recursive=True)
         mlflow.sklearn.save_model(regr, model_path)
-
 
 if __name__ == "__main__":
     main()
