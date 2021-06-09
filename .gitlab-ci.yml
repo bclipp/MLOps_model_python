@@ -4,6 +4,7 @@ always-run:
 on-pull-requests:
   stage: test
   script:
+    - pip install pylint
     - pylint app
 
 except-pull-requests:
