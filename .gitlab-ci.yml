@@ -6,6 +6,7 @@ on-pull-requests:
   stage: test
   script:
     - pip install pylint
+    - pip install -r requirments.txt
     - pylint -d C0103 app
 
 except-pull-requests:
