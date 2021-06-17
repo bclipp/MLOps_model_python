@@ -1,6 +1,0 @@
-
-numpy
-mlflow
-sklearn
-dbutils
-pyspark
