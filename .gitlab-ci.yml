@@ -25,3 +25,4 @@ except-pull-requests:
   except:
     - external_pull_requests
 
+# databricks fs cp ./model.pkl dbfs:/datalake/models/
