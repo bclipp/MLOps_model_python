@@ -71,8 +71,8 @@ def main():
         mlflow.log_metric("r2", r_squared)
         mlflow.log_metric("mae", mae)
         mlflow.sklearn.log_model(regr, "model")
-        random_number = random.randint(1, 900)
-        model_path = f"/Users/bclipp770@yandex.com/datalake/stocks/experiments/cluster_{uid}_model" + str(random_number)
+        random_number = str(random.randint(1, 900))
+        model_path = f"/Users/bclipp770@yandex.com/datalake/stocks/experiments/cluster_{uid}_model" + random_number
         print(f"model saved at: {model_path}")
         # dbutils.fs.rm(model_path, recursive=True)
         mlflow.sklearn.save_model(regr, model_path)
