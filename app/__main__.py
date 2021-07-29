@@ -4,6 +4,7 @@ This module is used for build a specified sklearn model
 
 import math
 import sys
+import random
 
 
 import numpy as np
@@ -14,7 +15,7 @@ from sklearn import metrics
 import mlflow
 import mlflow.sklearn
 from pyspark.sql import SparkSession
-import dbutils
+# import dbutils
 
 
 def main():
@@ -52,7 +53,7 @@ def main():
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.33, random_state=42)
     print("creating MLflow project")
     mlflow.set_experiment(f"/Users/bclipp770@yandex.com/datalake/stocks/experiments/cluster_{uid}")
-    #experiment = mlflow.get_experiment_by_name
+    # experiment = mlflow.get_experiment_by_name
     # (f"/Users/bclipp770@yandex.com/datalake/stocks/experiments/{uid}")
 
     with mlflow.start_run():
@@ -70,10 +71,12 @@ def main():
         mlflow.log_metric("r2", r_squared)
         mlflow.log_metric("mae", mae)
         mlflow.sklearn.log_model(regr, "model")
-        model_path = f"/Users/bclipp770@yandex.com/datalake/stocks/experiments/cluster_{uid}_model"
+        random_number = random.randint(1, 900)
+        model_path = f"/Users/bclipp770@yandex.com/datalake/stocks/experiments/cluster_{uid}_model" + random_number
         print(f"model saved at: {model_path}")
-        dbutils.fs.rm(model_path, recursive=True)
+        # dbutils.fs.rm(model_path, recursive=True)
         mlflow.sklearn.save_model(regr, model_path)
+
 
 if __name__ == "__main__":
     main()
