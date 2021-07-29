@@ -1,1 +1,1 @@
-# MLOps_model_python
+This app is used for training the ML model.

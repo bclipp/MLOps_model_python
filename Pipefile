@@ -1,0 +1,13 @@
+[[source]]
+url = "https://pypi.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[packages]
+numpy  = "*"
+mlflow  = "*"
+sklearn  = "*"
+dbutils  = "*"
+pyspark  = "*"
+
+[dev-packages]
